@@ -21,8 +21,9 @@ const DeleteProduct = (props) => {
     const message = result.data.message;
 
     if (status === 200) {
-      Alert.AlertSucces(message);
-      setTimeout(function () {}, 1000);
+      setTimeout(() => {
+        Alert.AlertSucces(message);
+      }, 500);
       props.closeModal();
     }
   };

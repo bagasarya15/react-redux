@@ -38,9 +38,13 @@ const CreateProduct = (props) => {
 
     if (status) {
       if (status == 200) {
-        Alert.AlertSucces(message);
+        setTimeout(() => {
+          Alert.AlertSucces(message);
+        }, 500);
       } else {
-        Alert.AlertError(message);
+        setTimeout(()=> {
+          Alert.AlertError(message);
+        }, 500)
       }
       navigate('/product');
     }

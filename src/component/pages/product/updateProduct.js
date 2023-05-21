@@ -40,18 +40,19 @@ const UpdateProduct = (props) => {
     const status = result.data.status;
     const message = result.data.message;
 
-    console.log(result, status, message);
     if (status) {
       if (status == 200) {
-        Alert.AlertSucces(message);
+        setTimeout(() => {
+          Alert.AlertSucces(message);
+        }, 500);
       } else {
-        Alert.AlertError(message);
+        setTimeout(()=> {
+          Alert.AlertError(message);
+        }, 500)
       }
       navigate('/product');
-    }
-    setTimeout(() => {
-      navigate('/product');
-    }, 3000);
+    };
+    
   };
 
   const ValidationForm = {

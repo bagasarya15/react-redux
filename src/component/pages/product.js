@@ -1,18 +1,60 @@
 import React, { useEffect, useState, Fragment } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { ProductGetAll } from '../../redux/action/actionReducer';
+import { ProductDelete, ProductGetAll } from '../../redux/action/actionReducer';
 import { ToastContainer, toast } from 'react-toastify';
 import Content from './content';
 import { Menu, Transition } from '@headlessui/react';
 import { BsThreeDotsVertical, BsPencil, BsTrash } from 'react-icons/bs';
 import DeleteProduct from './product/deleteProduct';
+import Swal from 'sweetalert2';
+import Alert from './alert';
 
 const Product = () => {
   let { product, message, refresh } = useSelector(
     (state) => state.productReducer,
   );
+  
+  const handleDelete = async (id) => {
+    try {
+      const result = await Swal.fire({
+        title: 'Delete Confirm?',
+        text: "Data yang dihapus tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      });
+  
+      if (result.isConfirmed) {
+        const result = await dispatch(ProductDelete(id));
+        const status = result.data.status;
+        const message = result.data.message;
 
+        if (status === 200) {
+          setTimeout(() => {
+            Alert.AlertSucces(message);
+          }, 500);
+        }
+      } else {
+        Swal.fire(
+          'Cancelled',
+          'Your file is safe.',
+          'info'
+        );
+      }
+      dispatch(ProductGetAll());
+    } catch (error) {
+      console.error('Error deleting data:', error);
+      Swal.fire(
+        'Error!',
+        'Failed to delete data. Please try again.',
+        'error'
+      );
+    }
+  };
+  
   const dispatch = useDispatch();
   const [productById, setproductById] = useState('');
   const [isDelete, setIsDelete] = useState(false);
@@ -99,9 +141,12 @@ const Product = () => {
                       <Menu.Item>
                         {({ active }) => (
                           <button
-                            onClick={() => {
-                              setproductById(p.id);
-                              setIsDelete(true);
+                            // onClick={() => {
+                            //   setproductById(p.id);
+                            //   setIsDelete(true);
+                            // }}
+                            onClick={()=>{
+                              handleDelete(p.id)
                             }}
                             className={`${
                               active
