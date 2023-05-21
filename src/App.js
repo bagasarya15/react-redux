@@ -9,6 +9,8 @@ import EditUser from './component/pages/users/updateUser';
 
 import Product from './component/pages/product';
 import CreateProduct from './component/pages/product/createProduct';
+import EditProduct from './component/pages/product/updateProduct';
+
 import Category from './component/pages/category';
 import Customer from './component/pages/customer';
 
@@ -25,6 +27,7 @@ function App() {
             <Route path="/category" element={<Category />} />
             <Route path="/product" element={<Product />} />
             <Route path="/create-product" element={<CreateProduct />} />
+            <Route path="/edit-product" element={<EditProduct />} />
             <Route path="/customer" element={<Customer />} />
           </Route>
         </Routes>

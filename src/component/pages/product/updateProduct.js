@@ -1,14 +1,15 @@
 import Alert from '../alert';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   CategorytGetAll,
   ProductPost,
+  ProductUpdate,
 } from '../../../redux/action/actionReducer';
 
-const CreateProduct = (props) => {
+const UpdateProduct = (props) => {
   const {
     register,
     handleSubmit,
@@ -19,23 +20,27 @@ const CreateProduct = (props) => {
     (state) => state.categoryReducer,
   );
 
+  const location = useLocation();
+  const ProductData = location.state?.ProductData;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleRegistration = async (data) => {
     const formData = new FormData();
     formData.append('name', data.name);
-    formData.append('description', data.description);
-    formData.append('category_id', data.category_id);
-    formData.append('price', data.price);
     formData.append('image', data.image[0]);
+    formData.append('category_id', data.category_id);
+    formData.append('description', data.description);
+    formData.append('price', data.price);
 
-    const result = await dispatch(ProductPost(formData)); //cara 1
-    // const result = await apiMethod.PostProduct(formData); //cara 2
+    const id = data.id;
+    const result = await dispatch(ProductUpdate(formData, id));
 
     const status = result.data.status;
     const message = result.data.message;
 
+    console.log(result, status, message);
     if (status) {
       if (status == 200) {
         Alert.AlertSucces(message);
@@ -44,11 +49,10 @@ const CreateProduct = (props) => {
       }
       navigate('/product');
     }
+    setTimeout(() => {
+      navigate('/product');
+    }, 3000);
   };
-
-  useEffect(() => {
-    dispatch(CategorytGetAll());
-  }, [refresh]);
 
   const ValidationForm = {
     name: { required: 'name product is required' },
@@ -56,12 +60,20 @@ const CreateProduct = (props) => {
     category_id: { required: 'category is required' },
     price: { required: 'price is required' },
     image: { required: 'image is required' },
+    id: { required: 'id tidak ditemukan' },
   };
+
+  useEffect(() => {
+    const GetData = async () => {
+      dispatch(CategorytGetAll());
+    };
+    GetData();
+  }, [refresh]);
 
   return (
     <div>
       <p className="text-gray-700 text-2xl mt-2 mb-5 font-bold uppercase">
-        Create Product
+        Update Product
       </p>
       <div class="border-t-1 border border-black-900"></div>
 
@@ -70,11 +82,18 @@ const CreateProduct = (props) => {
           <div className="grid grid-cols-1 gap-4 max-w-xl m-auto">
             <div className="col-span-1">
               <input
+                type="hidden"
+                name="id"
+                defaultValue={ProductData.id}
+                {...register('id', ValidationForm.id)}
+              />
+              <input
                 name="name"
                 placeholder="Nama Produk"
                 autoComplete="off"
                 {...register('name', ValidationForm.name)}
                 className="border w-full rounded-lg text-gray-800 py-2 px-2"
+                defaultValue={ProductData.name}
               />
               <span className="text-sm text-rose-600">
                 {errors?.name && errors.name.message}
@@ -87,6 +106,7 @@ const CreateProduct = (props) => {
                 autoComplete="off"
                 {...register('description', ValidationForm.description)}
                 className="border w-full rounded-lg text-gray-800 py-2 px-2"
+                defaultValue={ProductData.description}
               />
               <span className="text-sm text-rose-600">
                 {errors?.description && errors.description.message}
@@ -116,6 +136,7 @@ const CreateProduct = (props) => {
                 autoComplete="off"
                 {...register('price', ValidationForm.price)}
                 className="border w-full rounded-lg text-gray-800 py-2 px-2"
+                defaultValue={ProductData.price}
               />
               <span className="text-sm text-rose-600">
                 {errors?.price && errors.price.message}
@@ -162,4 +183,4 @@ const CreateProduct = (props) => {
   );
 };
 
-export default CreateProduct;
+export default UpdateProduct;

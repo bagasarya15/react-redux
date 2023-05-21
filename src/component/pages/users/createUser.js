@@ -13,7 +13,6 @@ const AddUser = (props) => {
   } = useForm();
 
   const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
   const [userRole, setUserRole] = useState('');
 

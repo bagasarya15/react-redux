@@ -1,19 +1,17 @@
-import React, { useEffect, useState, Fragment } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import apiMethod from '../api/apiMethod';
 import Content from './content';
-import { BsThreeDotsVertical, BsPencil, BsTrash } from 'react-icons/bs';
-import { Menu, Transition } from '@headlessui/react';
+import { Link } from 'react-router-dom';
 import AddUser from './users/createUser';
 import EditUser from './users/updateUser';
 import DeleteUser from './users/deleteUser';
+import { Menu, Transition } from '@headlessui/react';
 import { useDispatch, useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
 import { getAll } from '../../redux/action/actionReducer';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, Fragment } from 'react';
+import { BsThreeDotsVertical, BsPencil, BsTrash } from 'react-icons/bs';
 
 const Users = (props) => {
   const [userById, setUserById] = useState('');
-  const [userRole, setUserRole] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
@@ -37,11 +35,7 @@ const Users = (props) => {
     <div>
       <ToastContainer />
       {isOpen ? (
-        <AddUser
-          show={isOpen}
-          userRole={userRole}
-          closeModal={() => setIsOpen(false)}
-        />
+        <AddUser show={isOpen} closeModal={() => setIsOpen(false)} />
       ) : (
         ''
       )}
@@ -49,7 +43,6 @@ const Users = (props) => {
       {isEdit ? (
         <EditUser
           show={isEdit}
-          userRole={userRole}
           userById={userById}
           closeModal={() => setIsEdit(false)}
         />
@@ -67,7 +60,7 @@ const Users = (props) => {
         ''
       )}
 
-      <Content title="User" isOpen={() => setIsOpen(true)}>
+      <Content title="users" isOpen={() => setIsOpen(true)}>
         <table className="min-w-full table-fixed">
           <thead>
             <tr className="border-t border-gray-200">
@@ -152,7 +145,10 @@ const Users = (props) => {
                             <Menu.Item>
                               {({ active }) => (
                                 <button
-                                  onClick={() => {setUserById(dt); setIsDelete(true)}}
+                                  onClick={() => {
+                                    setUserById(dt);
+                                    setIsDelete(true);
+                                  }}
                                   className={`${
                                     active
                                       ? 'bg-blue-100 text-blue-900'

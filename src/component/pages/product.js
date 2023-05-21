@@ -1,157 +1,159 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, Fragment } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { ProductGetAll } from '../../redux/action/actionReducer';
+import { ToastContainer, toast } from 'react-toastify';
+import Content from './content';
+import { Menu, Transition } from '@headlessui/react';
+import { BsThreeDotsVertical, BsPencil, BsTrash } from 'react-icons/bs';
+import DeleteProduct from './product/deleteProduct';
 
 const Product = () => {
+  let { product, message, refresh } = useSelector(
+    (state) => state.productReducer,
+  );
+
+  const dispatch = useDispatch();
+  const [productById, setproductById] = useState('');
+  const [isDelete, setIsDelete] = useState(false);
+
+  useEffect(() => {
+    dispatch(ProductGetAll());
+  }, [refresh]);
+
+  const port = 'http://localhost:7300/';
+
+  const navigate = useNavigate();
+
   return (
     <>
-      <div className="mt-2 flex items-center justify-between">
-        <p className="text-gray-700 text-3xl mb-16 font-bold">Product</p>
-        <Link
-          to="/create-product"
-          type="button"
-          className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-        >
-          Create
-        </Link>
-      </div>
+      <ToastContainer />
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <div class="bg-white rounded-lg shadow-lg">
-          <img
-            src="./img/aset1.webp"
-            class="w-full h-48 object-cover object-center"
-          ></img>
-          <div class="p-4">
-            <p class="text-lg font-semibold mb-2">
-              ROG Phone 6 Diablo Immortal Edition
-            </p>
-            <div class="border-t-1 border border-black-500"></div>
-            <p class="text-gray-700 mt-2">Harga Asus</p>
-            <p class="text-red-700 mb-2">Rp 16.999.000</p>
-            <div class="border-t-1 border border-black-500"></div>
-            <ul class="list-none mt-2">
-              <li>Qualcomm Snapdragon 8+ Gen 1</li>
-              <li>LPDDR5 18GB</li>
-              <li>UFS3.1 512GB</li>
-              <li>Baterai 6000mAh</li>
-            </ul>
-          </div>
+      {isDelete ? (
+        <DeleteProduct
+          show={isDelete}
+          productById={productById}
+          closeModal={() => setIsDelete(false)}
+        />
+      ) : (
+        ''
+      )}
+
+      <Content title="product">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {(product || []).map((p) => (
+            <div className="bg-white rounded-lg shadow-lg" key={p.id}>
+              <Menu as="div" className="text-left w-full flex justify-end">
+                <div className="">
+                  <Menu.Button className=" rounded-md py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                    <BsThreeDotsVertical
+                      className=" h-5 w-5 text-gray-700 hover:text-gray-400 justify-items-end"
+                      aria-hidden="true"
+                    />
+                  </Menu.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute mt-0 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="px-1 py-1 ">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            onClick={() =>
+                              navigate('/edit-product', {
+                                state: { ProductData: p },
+                              })
+                            }
+                            // to={`/edit-product/${p.id}`}
+                            className={`${
+                              active
+                                ? 'bg-blue-100 text-blue-900'
+                                : 'text-blue-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                          >
+                            {active ? (
+                              <BsPencil
+                                className="mr-2 h-5 w-5"
+                                aria-hidden="true"
+                              />
+                            ) : (
+                              <BsPencil
+                                className="mr-2 h-5 w-5"
+                                aria-hidden="true"
+                              />
+                            )}
+                            Edit
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </div>
+
+                    <div className="px-1 py-1">
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            onClick={() => {
+                              setproductById(p.id);
+                              setIsDelete(true);
+                            }}
+                            className={`${
+                              active
+                                ? 'bg-blue-100 text-blue-900'
+                                : 'text-blue-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                          >
+                            {active ? (
+                              <BsTrash
+                                className="mr-2 h-5 w-5 text-black-400"
+                                aria-hidden="true"
+                              />
+                            ) : (
+                              <BsTrash
+                                className="mr-2 h-5 w-5 text-black-400"
+                                aria-hidden="true"
+                              />
+                            )}
+                            Delete
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+              <img
+                src={`${port}${p.image}`}
+                alt={p.name}
+                className="w-full h-48 object-cover object-center"
+              />
+              <div className="p-4">
+                <p className="text-lg font-semibold mb-2">{p.name}</p>
+                <p className="text-sm mb-2">{p.product_category.name}</p>
+                <div className="border-t-1 border border-black-500" />
+                <p className="text-gray-700 mt-2">Harga Product</p>
+                <p className="text-red-700 mb-2 font-semibold text-sm">
+                  {new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                  }).format(p.price)}{' '}
+                </p>
+                <div className="border-t-1 border border-black-500" />
+                <p className="text-gray-700 mt-2">Ringkasan Produk</p>
+                <ul className="list-none mt-2">
+                  <li className="text-sm">{p.description}</li>
+                </ul>
+              </div>
+            </div>
+          ))}
         </div>
-
-        <div class="bg-white rounded-lg shadow-lg">
-          <img
-            src="./img/aset2.webp"
-            class="w-full h-48 object-cover object-center"
-          ></img>
-          <div class="p-4">
-            <p class="text-lg font-semibold mb-2">
-              ASUS Zenbook S 13 OLED (UX5304)
-            </p>
-            <div class="border-t-1 border border-black-500"></div>
-            <p class="text-gray-700 mt-2">Harga Asus</p>
-            <p class="text-red-700 mb-2">Rp 22.999.000</p>
-            <div class="border-t-1 border border-black-500"></div>
-            <ul class="list-none mt-2">
-              <li>Windows 11 Pro - ASUS</li>
-              <li>13th Gen Intel® Core™ i7 Processor</li>
-              <li>13.3” 2.8K OLED HDR NanoEdge</li>
-              <li>Up to 1 TB SSD</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-lg">
-          <img
-            src="./img/aset3.webp"
-            class="w-full h-48 object-cover object-center"
-          ></img>
-          <div class="p-4">
-            <p class="text-lg font-semibold mb-2">ROG Phone 6 Pro</p>
-            <div class="border-t-1 border border-black-500"></div>
-            <p class="text-gray-700 mt-2">Harga Asus</p>
-            <p class="text-red-700 mb-2">Rp 18.999.000</p>
-            <div class="border-t-1 border border-black-500"></div>
-            <ul class="list-none mt-2">
-              <li>Qualcomm Snapdragon 8+ Gen 1</li>
-              <li>LPDDR5 18GB</li>
-              <li>UFS3.1 512GB</li>
-              <li>Baterai 6000mAh</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Section 2 */}
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-        <div class="bg-white rounded-lg shadow-lg">
-          <img
-            src="./img/aset4.webp"
-            class="w-full h-48 object-cover object-center"
-          ></img>
-          <div class="p-4">
-            <p class="text-lg font-semibold mb-2">
-              ROG Strix Scar 16 (2023) G634JY-I949M6T-O
-            </p>
-            <div class="border-t-1 border border-black-500"></div>
-            <p class="text-gray-700 mt-2">Harga Asus</p>
-            <p class="text-red-700 mb-2">Rp 71.999.000</p>
-            <div class="border-t-1 border border-black-500"></div>
-            <ul class="list-none mt-2">
-              <li>NVIDIA® GeForce RTX™ 4090</li>
-              <li>13th Gen Intel® Core™ i9-13980HX</li>
-              <li>16 inch, Refresh Rate:240Hz</li>
-              <li>2TB PCIe® 4.0 NVMe™ M.2 SSD</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-lg">
-          <img
-            src="./img/aset5.webp"
-            class="w-full h-48 object-cover object-center"
-          ></img>
-          <div class="p-4">
-            <p class="text-lg font-semibold mb-2">
-              Zenbook S 13 Flip OLED (UP5302, 12th Gen Intel)
-            </p>
-            <div class="border-t-1 border border-black-500"></div>
-            <p class="text-gray-700 mt-2">Harga Asus</p>
-            <p class="text-red-700 mb-2">Rp 23.999.000</p>
-            <div class="border-t-1 border border-black-500"></div>
-            <ul class="list-none mt-2">
-              <li>Windows 11 - ASUS</li>
-              <li>Intel® Iris® Xe graphics</li>
-              <li>13.3" 16:10 2.8K OLED NanoEdge</li>
-              <li>Long-lasting 67 Wh battery</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-lg shadow-lg">
-          <img
-            src="./img/aset6.webp"
-            class="w-full h-48 object-cover object-center"
-          ></img>
-          <div class="p-4">
-            <p class="text-lg font-semibold mb-2">
-              ROG Flow X13 (2022) GV301RC-R735A6T-O
-            </p>
-            <div class="border-t-1 border border-black-500"></div>
-            <p class="text-gray-700 mt-2">Harga Asus</p>
-            <p class="text-red-700 mb-2">Rp 25.999.000</p>
-            <div class="border-t-1 border border-black-500"></div>
-            <ul class="list-none mt-2">
-              <li>GeForce RTX™ 3050 Laptop GPU</li>
-              <li>AMD Ryzen™ 7 6800HS</li>
-              <li>13.4 inch, Refresh Rate:120Hz</li>
-              <li>512GB PCIe® 4.0 NVMe™ M.2 SSD</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid col-1 bg-white h-80 shadow-xl mt-32"></div>
+      </Content>
     </>
   );
 };

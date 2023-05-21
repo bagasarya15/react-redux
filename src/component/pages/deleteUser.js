@@ -1,7 +1,7 @@
 import React from 'react';
 import { Fragment } from 'react';
 import { Transition, Dialog } from '@headlessui/react';
-import apimethod from '../api/apiMethod';
+import apiMethod from '../api/apiMethod';
 import { useForm } from 'react-hook-form';
 import Alert from './alert';
 
@@ -13,7 +13,7 @@ const DeleteUser = (props) => {
   } = useForm();
 
   const handleRegistration = async (id) => {
-    const result = await apimethod.deleteUser(id);
+    const result = await apiMethod.deleteUser(id);
     const status = result.data.status;
     const message = result.data.message;
 

@@ -11,6 +11,8 @@ const ActionTypes = {
   DEL_PRODUCT: 'DEL_PRODUCT',
 
   GET_ROLE: 'GET_ROLE',
+
+  GET_CATEGORY: 'GET_CATEGORY',
 };
 
 export default ActionTypes;

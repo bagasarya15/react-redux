@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userUpdate } from '../../../redux/action/actionReducer';
 import { Link } from 'react-router-dom';
 
-
 const EditUser = (props) => {
   const {
     register,
@@ -17,7 +16,7 @@ const EditUser = (props) => {
   } = useForm();
 
   const navigate = useNavigate();
-  const params = useParams()
+  const params = useParams();
 
   const [showPassword, setShowPassword] = useState(false);
   const [userRole, setUserRole] = useState('');
@@ -25,15 +24,15 @@ const EditUser = (props) => {
 
   let { user, message, refresh } = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
-  
+
   const setFilter = () => {
-      const filterUser = user.filter((item) => item.id == params.id); 
-      setUserById(filterUser)
+    const filterUser = user.filter((item) => item.id == params.id);
+    setUserById(filterUser);
   };
 
   const handleRegistration = async (data) => {
-    data.id = userById[0]?.id
-    dispatch(userUpdate(data))
+    data.id = userById[0]?.id;
+    dispatch(userUpdate(data));
     navigate('/users');
   };
 
@@ -52,7 +51,12 @@ const EditUser = (props) => {
   };
 
   useEffect(() => {
-    setFilter()
+    const getData = async () => {
+      const resRole = await apiMethod.GetRoles();
+      setUserRole(resRole.data.result);
+    };
+    getData();
+    setFilter();
   }, [refresh]);
 
   return (
@@ -127,12 +131,13 @@ const EditUser = (props) => {
                 name="role_id"
                 {...register('role_id', registerOptions.role_id)}
               >
-                <option value="1">Choose a role</option>
-                {/* {Array.isArray(userRole) && userRole.map((ur) => (
-                  <option key={ur.id} value={ur.id}>
-                    {ur.name}
-                  </option>
-                ))} */}
+                <option value="">Choose a role</option>
+                {Array.isArray(userRole) &&
+                  userRole.map((ur) => (
+                    <option key={ur.id} value={ur.id}>
+                      {ur.name}
+                    </option>
+                  ))}
               </select>
               <span className="text-sm text-rose-600">
                 {errors?.role_id && errors.role_id.message}

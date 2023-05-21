@@ -1,6 +1,6 @@
 import ActionTypes from './actionType';
 import ApiMethod from '../../component/api/apiMethod';
-import Alert from '../../component/pages/alert'
+import Alert from '../../component/pages/alert';
 
 export const getAll = () => async (dispatch) => {
   try {
@@ -27,13 +27,13 @@ export const getUserById = (id) => async (dispatch) => {
 };
 
 export const userUpdate = (data) => async (dispatch) => {
-  console.log(data)
+  console.log(data);
   try {
     const res = await ApiMethod.update(data);
-    console.log(res.data)
+    console.log(res.data);
     dispatch({
       type: ActionTypes.UPDATE_USER,
-      payload: res.data
+      payload: res.data,
     });
     if (res.data.status) {
       if (res.data.status == 200) {
@@ -43,7 +43,7 @@ export const userUpdate = (data) => async (dispatch) => {
       }
     }
   } catch (error) {
-    return error.message
+    return error.message;
   }
 };
 
@@ -51,12 +51,81 @@ export const DelUser = (data) => async (dispatch) => {
   try {
     const res = await ApiMethod.deleteUser(data);
     dispatch({
-    type: ActionTypes.DEL_USER,
+      type: ActionTypes.DEL_USER,
       payload: res.data.result,
     });
-    if (res.data.status == 200) {
-      Alert.AlertSucces(res.data.message);
-    }
+
+    return res;
+  } catch (error) {
+    alert(error);
+  }
+};
+
+export const CategorytGetAll = () => async (dispatch) => {
+  try {
+    const result = await ApiMethod.GetAllCategory();
+    dispatch({
+      type: ActionTypes.GET_CATEGORY,
+      payload: result.data.result,
+    });
+
+    return result;
+  } catch (error) {
+    alert(error);
+  }
+};
+
+export const ProductGetAll = () => async (dispatch) => {
+  try {
+    const result = await ApiMethod.GetAllProduct();
+    dispatch({
+      type: ActionTypes.GET_PRODUCT,
+      payload: result.data.result,
+    });
+
+    return result;
+  } catch (error) {
+    alert(error);
+  }
+};
+
+export const ProductPost = (data) => async (dispatch) => {
+  try {
+    const result = await ApiMethod.PostProduct(data);
+    dispatch({
+      type: ActionTypes.ADD_PRODUCT,
+      payload: result.data.result,
+    });
+
+    return result;
+  } catch (error) {
+    alert(error);
+  }
+};
+
+export const ProductUpdate = (data, id) => async (dispatch) => {
+  try {
+    const result = await ApiMethod.UpdateProduct(data, id);
+    dispatch({
+      type: ActionTypes.UPDATE_PRODUCT,
+      payload: result.data.result,
+    });
+
+    return result;
+  } catch (error) {
+    alert(error);
+  }
+};
+
+export const ProductDelete = (id) => async (dispatch) => {
+  try {
+    const result = await ApiMethod.DeleteProduct(id);
+    dispatch({
+      type: ActionTypes.DEL_PRODUCT,
+      payload: result.data,
+    });
+
+    return result;
   } catch (error) {
     alert(error);
   }

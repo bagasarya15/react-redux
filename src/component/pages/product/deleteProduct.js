@@ -4,9 +4,9 @@ import { Transition, Dialog } from '@headlessui/react';
 import { useForm } from 'react-hook-form';
 import Alert from '../alert';
 import { useDispatch } from 'react-redux';
-import { DelUser } from '../../../redux/action/actionReducer';
+import { ProductDelete } from '../../../redux/action/actionReducer';
 
-const DeleteUser = (props) => {
+const DeleteProduct = (props) => {
   const {
     register,
     handleSubmit,
@@ -15,12 +15,12 @@ const DeleteUser = (props) => {
 
   const dispatch = useDispatch();
 
-  const handleRegistration = async (data) => {
-    const result = await dispatch(DelUser(data));
+  const handleRegistration = async () => {
+    const result = await dispatch(ProductDelete(props.productById));
     const status = result.data.status;
     const message = result.data.message;
 
-    if (status == 200) {
+    if (status === 200) {
       Alert.AlertSucces(message);
       setTimeout(function () {}, 1000);
       props.closeModal();
@@ -67,36 +67,37 @@ const DeleteUser = (props) => {
                   </Dialog.Title>
                   <div class="border-t-1 border border-black-900 mt-3"></div>
                   <div className="mt-2">
-                    <form onSubmit={handleSubmit(handleRegistration)}>
-                      <div className="max-w-xl bg-white py-6 px-3 m-auto w-full mt-6">
-                        <div className="grid grid-cols-1 gap-4 max-w-xl m-auto">
-                          <div className="col-span-1">
-                            <input
-                              type="hidden"
-                              name="id"
-                              defaultValue={props.userById.id}
-                              {...register('id', registerOptions.id)}
-                            />
-                            <p className="font-semibold mb-7 uppercase text-md text-rose-600">
-                              Hapus data yang anda pilih ?
-                            </p>
-                          </div>
-                        </div>
-                        <div class="border-t-1 border border-black-900 mt-3"></div>
-                        <div className="flex-row space-x-4 mt-4 text-right">
-                          <button className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
-                            Ya !
-                          </button>
-
-                          <button
-                            className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                            onClick={props.closeModal}
-                          >
-                            Batal
-                          </button>
+                    <div className="max-w-xl bg-white py-6 px-3 m-auto w-full mt-6">
+                      <div className="grid grid-cols-1 gap-4 max-w-xl m-auto">
+                        <div className="col-span-1">
+                          <input
+                            type="hidden"
+                            name="id"
+                            defaultValue={props.productById}
+                            {...register('id', registerOptions.id)}
+                          />
+                          <p className="font-semibold mb-7 uppercase text-md text-rose-600">
+                            Hapus data yang anda pilih ?
+                          </p>
                         </div>
                       </div>
-                    </form>
+                      <div class="border-t-1 border border-black-900 mt-3"></div>
+                      <div className="flex-row space-x-4 mt-4 text-right">
+                        <button
+                          onClick={handleRegistration}
+                          className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        >
+                          Ya !
+                        </button>
+
+                        <button
+                          onClick={props.closeModal}
+                          className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        >
+                          Batal
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -108,4 +109,4 @@ const DeleteUser = (props) => {
   );
 };
 
-export default DeleteUser;
+export default DeleteProduct;
