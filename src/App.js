@@ -23,7 +23,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="/users" element={<Users />} />
             <Route path="/create-users" element={<CreateUser />} />
-            <Route path="/edit-users/:id" element={<EditUser />} />
+            <Route path="/edit-users" element={<EditUser />} />
             <Route path="/category" element={<Category />} />
             <Route path="/product" element={<Product />} />
             <Route path="/create-product" element={<CreateProduct />} />

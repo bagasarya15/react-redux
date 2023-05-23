@@ -1,5 +1,5 @@
 import Content from './content';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AddUser from './users/createUser';
 import EditUser from './users/updateUser';
 import DeleteUser from './users/deleteUser';
@@ -18,6 +18,7 @@ const Users = (props) => {
 
   let { user, message, refresh } = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const column = [
     { name: '#No' },
@@ -115,9 +116,13 @@ const Users = (props) => {
                           <div className="px-1 py-1 ">
                             <Menu.Item>
                               {({ active }) => (
-                                <Link
-                                  to={`/edit-users/${dt.id}`}
-                                  // onClick={ ()=> GetById(dt.id) }
+                                <button
+                                  // to={`/edit-users/${dt.id}`}
+                                  onClick={() =>
+                                    navigate('/edit-users', {
+                                      state: { UsersData: dt },
+                                    })
+                                  }
                                   className={`${
                                     active
                                       ? 'bg-blue-100 text-blue-900'
@@ -136,7 +141,7 @@ const Users = (props) => {
                                     />
                                   )}
                                   Edit
-                                </Link>
+                                </button>
                               )}
                             </Menu.Item>
                           </div>

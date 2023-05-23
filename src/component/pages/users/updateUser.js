@@ -3,7 +3,7 @@ import apiMethod from '../../api/apiMethod';
 import { useForm } from 'react-hook-form';
 import Alert from '../alert';
 import { FaEyeSlash, FaEye } from 'react-icons/fa';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { userUpdate } from '../../../redux/action/actionReducer';
 import { Link } from 'react-router-dom';
@@ -15,8 +15,9 @@ const EditUser = (props) => {
     formState: { errors },
   } = useForm();
 
+  const location = useLocation();
+  const UsersData = location.state?.UsersData;
   const navigate = useNavigate();
-  const params = useParams();
 
   const [showPassword, setShowPassword] = useState(false);
   const [userRole, setUserRole] = useState('');
@@ -25,18 +26,13 @@ const EditUser = (props) => {
   let { user, message, refresh } = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
 
-  const setFilter = () => {
-    const filterUser = user.filter((item) => item.id == params.id);
-    setUserById(filterUser);
-  };
-
   const handleRegistration = async (data) => {
-    data.id = userById[0]?.id;
     dispatch(userUpdate(data));
-    navigate('/users');
+    // navigate('/users');
   };
 
   const registerOptions = {
+    id: { required: 'id is required' },
     username: { required: 'username is required' },
     // password: {
     //   required: 'password is required',
@@ -56,7 +52,6 @@ const EditUser = (props) => {
       setUserRole(resRole.data.result);
     };
     getData();
-    setFilter();
   }, [refresh]);
 
   return (
@@ -65,13 +60,22 @@ const EditUser = (props) => {
         <div className="max-w-xl bg-white py-6 px-3 m-auto w-full">
           <div className="grid grid-cols-1 gap-4 max-w-xl m-auto">
             <div className="col-span-1">
+            <input
+                name="id"
+                type='hidden'
+                placeholder="Username"
+                autoComplete="off"
+                {...register('id', registerOptions[0]?.id)}
+                className="border w-full rounded-lg text-gray-800 py-2 px-2"
+                defaultValue={UsersData.id}
+              />
               <input
                 name="username"
                 placeholder="Username"
                 autoComplete="off"
                 {...register('username', registerOptions[0]?.username)}
                 className="border w-full rounded-lg text-gray-800 py-2 px-2"
-                defaultValue={userById[0]?.username}
+                defaultValue={UsersData.username}
               />
               <span className="text-sm text-rose-600">
                 {errors?.username && errors.username.message}
@@ -99,7 +103,7 @@ const EditUser = (props) => {
             </div>
             <div className="col-span-1">
               <input
-                defaultValue={userById[0]?.customer.firstname}
+                defaultValue={UsersData.customer.firstname}
                 type="text"
                 name="firstname"
                 placeholder="Firstname"
@@ -113,7 +117,7 @@ const EditUser = (props) => {
             </div>
             <div className="col-span-1">
               <input
-                defaultValue={userById[0]?.customer.lastname}
+                defaultValue={UsersData.customer.lastname}
                 type="text"
                 name="lastname"
                 placeholder="Lastname"
